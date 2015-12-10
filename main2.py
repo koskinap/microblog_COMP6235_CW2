@@ -4,28 +4,47 @@ import pymongo
 import datetime
 import time
 
-# mongoimport --host=127.0.0.1 -d microblog -c microblogData --type csv --file /Users/koskinap/Projects/DS_CW2/microblogDataset_COMP6235_CW2.csv --headerline
-
 client = MongoClient('mongodb://localhost:27017/')
+col = client.microblog.microdata
 
-db = client.microblog
-col = db.microdata
 
 #find total number of records:1.459.861
-time_sorted = col.find().sort('timestamp', pymongo.ASCENDING)
-time_sorted2 = time_sorted.limit
-time_delta = []
-#temp = time_sorted.limit(3)
-temp2 = time_sorted[0]['timestamp'].replace(' ','T')
-prevDt = datetime.datetime.strptime(temp2, '%Y-%m-%dT%H:%M:%S')
+records_number=col.count()
 
-for crawler in time_sorted:
-	temp = crawler['timestamp'].replace(' ','T')
-	currDt = datetime.datetime.strptime(temp, '%Y-%m-%dT%H:%M:%S')
-	diff = (currDt-prevDt).total_seconds()
-	print diff
-	time_delta.append(diff)
-	prevDt = currDt
+#
+# dates = col.find().sort('timestamp', pymongo.ASCENDING)
+
+pipeline2 = [
+		{"$sort": { "timestamp": pymongo.ASCENDING} },
+		{"$group": {"_id": "null", "maxdate": {"$last": "$timestamp"}, "mindate":{"$first":"$timestamp"}}}	
+]
+
+marginDates = list(col.aggregate(pipeline2, allowDiskUse=True))
+
+maxd = marginDates[0]['maxdate'];
+mind = marginDates[0]['mindate'];
+
+print(maxd,mind)
+
+
+# for d in dates:
+# 	print(d['timestamp'])
+exit()
+#dates = datetime.datetime.strptime( , '%Y-%m-%dT%H:%M:%S')
+cur = dates.find({'timestamp': {'$gte': datetime.min, '$lte': datetime.max}})
+print(gte)
+
+# time_delta = []
+# temp2 = time_sorted[0]['timestamp'].replace(' ','T')
+# prevDt = datetime.datetime.strptime(temp2, '%Y-%m-%dT%H:%M:%S')
+
+# for crawler in time_sorted:
+# 	temp = crawler['timestamp'].replace(' ','T')
+# 	currDt = datetime.datetime.strptime(temp, '%Y-%m-%dT%H:%M:%S')
+# 	diff = (currDt-prevDt).total_seconds()
+# 	print diff
+# 	time_delta.append(diff)
+# 	prevDt = currDt
 
 
 client.close()
