@@ -2,8 +2,6 @@ from pymongo import MongoClient
 from bson.code import Code
 import pymongo
 
-# mongoimport --host=127.0.0.1 -d microblog -c microblogData --type csv --file /Users/koskinap/Projects/DS_CW2/microblogDataset_COMP6235_CW2.csv --headerline
-
 client = MongoClient('mongodb://localhost:27017/')
 col = client.microblog.microdata
 
