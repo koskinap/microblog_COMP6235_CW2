@@ -9,13 +9,12 @@ col = client.microblog.microdata
 
 #find total number of records:1.459.861
 records_number=col.count()
-print(records_number)
-# n2 = col.distinct('id')
-# print(len(rn2))
+#print(records_number)
+
 
 #q1-119.231
 unique_users = col.distinct('id_member')
-print(len(unique_users))
+print('Number of unique users is equal to ' + str(len(unique_users)))
 
 #q2-2.21%
 pipeline = [
@@ -30,10 +29,6 @@ tweet_sum = 0
 for c in top10_users:
 	tweet_sum = tweet_sum + c['count']
 
-print(100.0*tweet_sum/records_number)
+print('Percentage of tweets made by 10 top users ' + str(100.0*tweet_sum/records_number) + '%')
 
 client.close()
-
-
-# for doc in q1:
-# 	print(doc)
